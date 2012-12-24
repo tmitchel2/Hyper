@@ -1,11 +1,7 @@
 Hyper
 =====
 
-**Hypermedia Api Framework**
-
-## Overview
-
-Hyper is a client / server framework which enables you to quickly construct (fully) RESTful compliant api's.
+Hypermedia Api Framework for building fully RESTful compliant internet scale web applications.
 
 ## Features
 
