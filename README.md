@@ -1,7 +1,7 @@
 Hyper
 =====
 
-Hypermedia Api Framework for building fully RESTful compliant internet scale web applications.
+A hypermedia api framework for building fully REST compliant internet scale web applications.
 
 ## Features
 
