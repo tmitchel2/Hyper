@@ -104,3 +104,26 @@ A hypermedia api framework for building fully REST compliant internet scale web 
             return new Uri(Request.RequestUri, Url.Route("DefaultApi", new { controller, id })).ToString();
         }
     }
+    
+### Hypermedia Json
+    {
+        "name": "HyperTests",
+        "version": "0.0.1.0",
+        "_links": {
+            "self": {
+                "href": "http://api.example.com/?accept=application/json"
+            },
+            "types": {
+                "href": "http://api.example.com/type?accept=application/json"
+            },
+            "sessions": {
+                "href": "http://api.example.com/session?accept=application/json"
+            },
+            "users": {
+                "href": "http://api.example.com/user?accept=application/json"
+            },
+            "messages": {
+                "href": "http://api.example.com/message?accept=application/json"
+            }
+        }
+    }
