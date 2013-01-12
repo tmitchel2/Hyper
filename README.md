@@ -15,3 +15,18 @@ A hypermedia api framework for building fully REST compliant internet scale web 
 ## References
 
 - http://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven
+
+## Client Usage
+
+    // Initialise client
+    using (var client = new HyperClient())
+    {
+      // Get Api
+      var api = await client.Get<Api>(@"https://api.example.com");
+      
+      // Login - Create a session object using HTTP POST
+      var session = await api.Sessions.Post(new Session { Username = "username", Password = "password" }, client);
+      
+      // Logout - Delete the session object using HTTP DELETE
+      await session.Delete(client);
+    }
