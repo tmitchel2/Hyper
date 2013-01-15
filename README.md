@@ -6,7 +6,7 @@ A hypermedia api framework for building fully REST compliant internet scale web 
 ## Features
 
 - Discoverability through hypertext aware media types.
-- Transfer protocol independence (Http, Ftp, etc).
+- Transport protocol independence (Tcp, Websocket, etc).
 - Transfer format independence (Json, Xml, Html, etc).
 - Client / Server independence enabling internet scale versioning across multiple domains.
 - Stateless communication (No server side session state) to enable internet level scaling.
