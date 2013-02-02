@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -55,7 +56,18 @@ namespace Hyper
         {
             return client.Get<IList<T>>(Href);
         }
-        
+
+        /// <summary>
+        /// Gets the specified id.
+        /// </summary>
+        /// <param name="id">The id.</param>
+        /// <param name="client">The client.</param>
+        /// <returns></returns>
+        public Task<T> Get(string id, HyperClient client)
+        {
+            return client.Get<T>(new Uri(new Uri(Href), id).ToString());
+        }
+
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.
         /// </summary>

@@ -29,15 +29,7 @@ namespace Hyper.Http.SelfHost
         /// The web API user name password validator.
         /// </value>
         public UserNamePasswordValidator WebApiUserNamePasswordValidator { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether [use authentication cookie].
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if [use authentication cookie]; otherwise, <c>false</c>.
-        /// </value>
-        public bool UseAuthenticationCookie { get; set; }
-
+        
         /// <summary>
         /// Gets or sets the name of the authentication cookie.
         /// </summary>
@@ -45,7 +37,21 @@ namespace Hyper.Http.SelfHost
         /// The name of the authentication cookie.
         /// </value>
         public string AuthenticationCookieName { get; set; }
-        
+
+        /// <summary>
+        /// Gets the name of the session cookie.
+        /// </summary>
+        /// <value>
+        /// The name of the session cookie.
+        /// </value>
+        public string SessionCookieName
+        {
+            get
+            {
+                return AuthenticationCookieName + "-sessionid";
+            }
+        }
+
         /// <summary>
         /// Called to apply the configuration on the endpoint level.
         /// </summary>

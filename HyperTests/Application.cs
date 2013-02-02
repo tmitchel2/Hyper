@@ -42,7 +42,6 @@ namespace HyperTests
 
             // NOTE : Do not use username / password validation on the transport binding
             //        This is done at the server level
-            config.UseAuthenticationCookie = true;
             config.AuthenticationCookieName = "hyper-auth";
             config.WebApiUserNamePasswordValidator = new HyperUserNamePasswordValidator();
 

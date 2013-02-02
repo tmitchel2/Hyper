@@ -8,14 +8,6 @@ namespace Hyper.Http
     public interface IAuthenticationConfiguration
     {
         /// <summary>
-        /// Gets a value indicating whether [use authentication cookie].
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if [use authentication cookie]; otherwise, <c>false</c>.
-        /// </value>
-        bool UseAuthenticationCookie { get; }
-
-        /// <summary>
         /// Gets the name of the authentication cookie.
         /// </summary>
         /// <value>

@@ -79,14 +79,14 @@ namespace Hyper.Http.Formatting
                     .GetCustomAttributes(typeof(HyperContractAttribute), true)
                     .Cast<HyperContractAttribute>()
                     .Select(attribute => new MediaTypeWithQualityHeaderValue(attribute.MediaType + @"list+json"))
-                    .SingleOrDefault();
+                    .Single();
             }
 
             return type
                 .GetCustomAttributes(typeof(HyperContractAttribute), true)
                 .Cast<HyperContractAttribute>()
                 .Select(attribute => new MediaTypeWithQualityHeaderValue(attribute.MediaType + @"+json"))
-                .SingleOrDefault();
+                .Single();
         }
 
         /// <summary>

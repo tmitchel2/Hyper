@@ -44,6 +44,13 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Http.Controllers\DelegatingApiControllerActionSelector.cs" />
+    <Compile Include="Http.Controllers\HttpParameterBindingExtensions.cs" />
+    <Compile Include="Http.Controllers\HttpRequestMessageExtensions.cs" />
+    <Compile Include="Http.Controllers\HyperApiControllerActionSelector.cs" />
+    <Compile Include="Http.Controllers\HttpRequestMessageExtensionsPartial.cs" />
+    <Compile Include="Http.Controllers\SimpleHyperApiControllerActionSelector.cs" />
+    <Compile Include="Http.Controllers\TypeHelper.cs" />
     <Compile Include="Http.Dispatcher\HttpControllerTypeCache.cs" />
     <Compile Include="Http.Dispatcher\HyperHttpControllerSelector.cs" />
     <Compile Include="Http.Formatting\HyperHtmlMediaTypeFormatter.cs" />
@@ -51,6 +58,7 @@
     <Compile Include="Http.Formatting\HyperXmlMediaTypeFormatter.cs" />
     <Compile Include="Http.SelfHost\HyperHttpSelfHostConfiguration.cs" />
     <Compile Include="Http.Serialization\HyperSerialiser.cs" />
+    <Compile Include="Http\DictionaryExtensions.cs" />
     <Compile Include="Http\UnknownHttpMethodException.cs" />
     <Compile Include="HyperClient.cs" />
     <Compile Include="HyperContractAttribute.cs" />
@@ -60,6 +68,7 @@
     <Compile Include="HyperLinkList.cs" />
     <Compile Include="HyperLink.cs" />
     <Compile Include="HyperLinkAttribute.cs" />
+    <Compile Include="HyperLinkListExtensions.cs" />
     <Compile Include="HyperList.cs" />
     <Compile Include="HyperMember.cs" />
     <Compile Include="HyperMemberAttribute.cs" />

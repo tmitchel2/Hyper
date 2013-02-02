@@ -76,7 +76,13 @@ namespace Hyper.Http.Dispatcher
                 return null;
             }
 
-            return (string)routeData.Values["controller"];
+            string name = string.Empty;
+            if (routeData.Values.ContainsKey("controller1"))
+            {
+                name = (string)routeData.Values["controller1"];
+            }
+
+            return (string)routeData.Values["controller"] + name;
         }
 
         /// <summary>

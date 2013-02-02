@@ -110,6 +110,11 @@ namespace Hyper.Http.Serialization
         /// </returns>
         public override IDictionary<string, object> Serialize(object obj, JavaScriptSerializer serializer)
         {
+            if (obj == null)
+            {
+                return new Dictionary<string, object>();
+            }
+
             // Serialise members
             var items = obj
                 .GetType()
@@ -365,7 +370,7 @@ namespace Hyper.Http.Serialization
             {
                 case "System.Version":
                     var version = (Version)obj;
-                    return string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Revision, version.Build);
+                    return string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
 
                 default:
                     return obj;
