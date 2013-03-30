@@ -174,19 +174,6 @@ namespace Hyper.Http.Serialization
         }
 
         /// <summary>
-        /// Sets the member value.
-        /// </summary>
-        /// <param name="obj">The obj.</param>
-        /// <param name="prop">The prop.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="serializer"> </param>
-        private void SetMemberValue(object obj, PropertyInfo prop, object value, JavaScriptSerializer serializer)
-        {
-            value = CustomDeserialize(prop.PropertyType, value, serializer);
-            prop.GetSetMethod().Invoke(obj, new[] { value });
-        }
-
-        /// <summary>
         /// Determines whether the specified prop is member.
         /// </summary>
         /// <param name="prop">The prop.</param>
@@ -335,44 +322,6 @@ namespace Hyper.Http.Serialization
         }
 
         /// <summary>
-        /// Customs the deserialize.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <param name="data">The data.</param>
-        /// <param name="serializer"> </param>
-        /// <returns></returns>
-        private object CustomDeserialize(Type type, object data, JavaScriptSerializer serializer)
-        {
-            if (type == typeof(Version))
-            {
-                return Version.Parse((string)data);
-            }
-
-            if (type == typeof(Guid))
-            {
-                return Guid.Parse((string)data);
-            }
-
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IList<>))
-            {
-                var itemType = type.GetGenericArguments()[0];
-                var listType = typeof(List<>).MakeGenericType(itemType);
-                var list = (IList)Activator.CreateInstance(listType);
-
-                var array = (ArrayList) data;
-                foreach (IDictionary<string, object> item in array)
-                {
-                    var obj = Deserialize(item, itemType, serializer);
-                    list.Add(obj);
-                }
-
-                return list;
-            }
-
-            return data;
-        }
-
-        /// <summary>
         /// Customs the serialize.
         /// </summary>
         /// <param name="obj">The obj.</param>
@@ -393,6 +342,57 @@ namespace Hyper.Http.Serialization
                 default:
                     return obj;
             }
+        }
+
+        /// <summary>
+        /// Sets the member value.
+        /// </summary>
+        /// <param name="obj">The obj.</param>
+        /// <param name="prop">The prop.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="serializer">The serializer.</param>
+        private void SetMemberValue(object obj, PropertyInfo prop, object value, JavaScriptSerializer serializer)
+        {
+            value = CustomDeserialize(prop.PropertyType, value, serializer);
+            prop.GetSetMethod().Invoke(obj, new[] { value });
+        }
+
+        /// <summary>
+        /// Customs the deserialize.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="data">The data.</param>
+        /// <param name="serializer">The serializer.</param>
+        /// <returns>The custom deserializer.</returns>
+        private object CustomDeserialize(Type type, object data, JavaScriptSerializer serializer)
+        {
+            if (type == typeof(Version))
+            {
+                return Version.Parse((string)data);
+            }
+
+            if (type == typeof(Guid))
+            {
+                return Guid.Parse((string)data);
+            }
+
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IList<>))
+            {
+                var itemType = type.GetGenericArguments()[0];
+                var listType = typeof(List<>).MakeGenericType(itemType);
+                var list = (IList)Activator.CreateInstance(listType);
+
+                var array = (ArrayList)data;
+                foreach (IDictionary<string, object> item in array)
+                {
+                    var obj = Deserialize(item, itemType, serializer);
+                    list.Add(obj);
+                }
+
+                return list;
+            }
+
+            return data;
         }
 
         /// <summary>
