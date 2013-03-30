@@ -57,7 +57,7 @@ namespace HyperTests
             config.Formatters.Add(new HyperXmlMediaTypeFormatter(types));
             config.MessageHandlers.Add(new RestQueryParameterHandler());
             config.MessageHandlers.Add(new AuthenticationHandler(config));
-            config.Filters.Add(new BasicAuthenticationAttribute());
+            config.Filters.Add(new BasicAuthenticationAttribute(config));
             config.Services.Replace(typeof(ITraceWriter), new SimpleTracer());
             return config;
         }

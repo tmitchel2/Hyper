@@ -35,8 +35,13 @@ namespace Hyper.Http.Controllers
         {
             if (controllerContext.RouteData.Values.ContainsKey("controller1"))
             {
-                var methodInfo = controllerContext.Controller.GetType()
-                    .GetMethods(BindingFlags.Instance | BindingFlags.Public).First(m => m.Name == "Get");
+                var method = controllerContext.Request.Method.Method.ToUpperInvariant();
+
+                var methodInfo = controllerContext
+                    .Controller
+                    .GetType()
+                    .GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                    .First(m => m.Name.ToUpperInvariant() == method);
 
                 return new ReflectedHttpActionDescriptor(controllerContext.ControllerDescriptor, methodInfo);
             }

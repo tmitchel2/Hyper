@@ -56,7 +56,7 @@ namespace Hyper.Http.Serialization
 
                 if (prop != null)
                 {
-                    SetMemberValue(obj, prop, member.Value);
+                    SetMemberValue(obj, prop, member.Value, serializer);
                 }
             }
 
@@ -179,9 +179,10 @@ namespace Hyper.Http.Serialization
         /// <param name="obj">The obj.</param>
         /// <param name="prop">The prop.</param>
         /// <param name="value">The value.</param>
-        private static void SetMemberValue(object obj, PropertyInfo prop, object value)
+        /// <param name="serializer"> </param>
+        private void SetMemberValue(object obj, PropertyInfo prop, object value, JavaScriptSerializer serializer)
         {
-            value = CustomDeserialize(prop.PropertyType, value);
+            value = CustomDeserialize(prop.PropertyType, value, serializer);
             prop.GetSetMethod().Invoke(obj, new[] { value });
         }
 
@@ -338,8 +339,9 @@ namespace Hyper.Http.Serialization
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="data">The data.</param>
+        /// <param name="serializer"> </param>
         /// <returns></returns>
-        private static object CustomDeserialize(Type type, object data)
+        private object CustomDeserialize(Type type, object data, JavaScriptSerializer serializer)
         {
             if (type == typeof(Version))
             {
@@ -349,6 +351,22 @@ namespace Hyper.Http.Serialization
             if (type == typeof(Guid))
             {
                 return Guid.Parse((string)data);
+            }
+
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IList<>))
+            {
+                var itemType = type.GetGenericArguments()[0];
+                var listType = typeof(List<>).MakeGenericType(itemType);
+                var list = (IList)Activator.CreateInstance(listType);
+
+                var array = (ArrayList) data;
+                foreach (IDictionary<string, object> item in array)
+                {
+                    var obj = Deserialize(item, itemType, serializer);
+                    list.Add(obj);
+                }
+
+                return list;
             }
 
             return data;
@@ -391,7 +409,7 @@ namespace Hyper.Http.Serialization
                 value = Deserialize(value as IDictionary<string, object>, prop.PropertyType, serializer);
             }
 
-            SetMemberValue(obj, prop, value);
+            SetMemberValue(obj, prop, value, serializer);
         }
 
         /// <summary>
@@ -408,7 +426,7 @@ namespace Hyper.Http.Serialization
                 value = Deserialize(value as IDictionary<string, object>, prop.PropertyType, serializer);
             }
 
-            SetMemberValue(obj, prop, value);
+            SetMemberValue(obj, prop, value, serializer);
         }
         
         /// <summary>
