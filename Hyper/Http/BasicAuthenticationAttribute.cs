@@ -70,7 +70,8 @@ namespace Hyper.Http
         public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
         {
             base.OnActionExecuted(actionExecutedContext);
-            if (actionExecutedContext.Response.Headers.WwwAuthenticate == null)
+            if (actionExecutedContext.Response == null && 
+                actionExecutedContext.Response.Headers.WwwAuthenticate == null)
             {
                 actionExecutedContext.Response.Headers.WwwAuthenticate.Add(
                     new AuthenticationHeaderValue("Basic", "realm=\"nakack\""));

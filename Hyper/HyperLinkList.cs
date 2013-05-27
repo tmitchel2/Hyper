@@ -52,9 +52,9 @@ namespace Hyper
         /// </summary>
         /// <param name="client">The client.</param>
         /// <returns></returns>
-        public Task<IList<T>> Get(HyperClient client)
+        public Task<HyperList<T>> Get(HyperClient client)
         {
-            return client.Get<IList<T>>(Href);
+            return client.Get<HyperList<T>>(Href);
         }
 
         /// <summary>
