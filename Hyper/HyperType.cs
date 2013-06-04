@@ -7,9 +7,9 @@ namespace Hyper
     /// HyperType class.
     /// </summary>
     [HyperContract(Name = "hypertype", MediaType = "application/vnd.hyper.hypertype", Version = "1.0.0.0")]
-    public class HyperType
+    public class HyperType : IHyperEntity<HyperType>
     {
-        public static readonly HyperType String = new HyperType(new HyperLink("/hyper/types/string"), "string");
+        public static readonly HyperType String = new HyperType(new HyperLink<HyperType>("/hyper/types/string"), "string");
         
         /// <summary>
         /// Initializes a new instance of the <see cref="HyperType" /> class.
@@ -25,12 +25,12 @@ namespace Hyper
         /// <param name="name">The name.</param>
         /// <param name="members">The members.</param>
         /// <param name="links">The links.</param>
-        public HyperType(HyperLink self, string name, IEnumerable<HyperMember> members = null, IEnumerable<HyperLink> links = null)
+        public HyperType(HyperLink<HyperType> self, string name, IEnumerable<HyperMember> members = null, IEnumerable<HyperLink<HyperType>> links = null)
         {
             Self = self;
             Name = name;
             Members = members != null ? members.ToList() : new List<HyperMember>();
-            Links = links != null ? links.ToList() : new List<HyperLink>();
+            Links = links != null ? links.ToList() : new List<HyperLink<HyperType>>();
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Hyper
         /// The self.
         /// </value>
         [HyperLink(Rel = "self")]
-        public HyperLink Self { get; set; }
+        public HyperLink<HyperType> Self { get; set; }
 
         /// <summary>
         /// Gets or sets the name.
@@ -76,6 +76,6 @@ namespace Hyper
         /// The links.
         /// </value>
         [HyperEmbedded(Rel = "links")]
-        public IList<HyperLink> Links { get; set; }
+        public IList<HyperLink<HyperType>> Links { get; set; }
     }
 }

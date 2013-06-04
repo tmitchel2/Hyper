@@ -3,7 +3,7 @@ namespace Hyper
     /// <summary>
     /// IHyperEntity interface.
     /// </summary>
-    public interface IHyperEntity
+    public interface IHyperEntity<T>
     {
         /// <summary>
         /// Gets or sets the self.
@@ -12,6 +12,6 @@ namespace Hyper
         /// The self.
         /// </value>
         [HyperLink(Rel = "self")]
-        HyperLink Self { get; set; }
+        HyperLink<T> Self { get; set; }
     }
 }

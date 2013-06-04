@@ -4,9 +4,9 @@ namespace Hyper
     /// HyperLink class.
     /// </summary>
     [HyperContract(Name = "hyperlink", MediaType = "application/vnd.hyper.hyperlink", Version = "1.0.0.0")]
-    public class HyperLink
+    public class HyperLink<T>
     {
-        public static readonly HyperLink Empty = new HyperLink();
+        public static readonly HyperLink<T> Empty = new HyperLink<T>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HyperLink" /> class.

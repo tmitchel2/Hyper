@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,22 +8,24 @@ namespace Hyper
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [HyperContract(Name = "hyperlist", MediaType = "application/vnd.hyper.hyperlist", Version = "1.0.0.0")]
-    public class HyperList<T> : IHyperEntity
+    public class HyperList<T> : IHyperEntity<HyperList<T>>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="HyperList{T}" /> class.
         /// </summary>
         public HyperList()
-            : this(Enumerable.Empty<T>())
+            : this(HyperLink<HyperList<T>>.Empty, Enumerable.Empty<T>())
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HyperList{T}" /> class.
         /// </summary>
+        /// <param name="self">The self.</param>
         /// <param name="items">The items.</param>
-        public HyperList(IEnumerable<T> items)
+        public HyperList(HyperLink<HyperList<T>> self, IEnumerable<T> items)
         {
+            Self = self;
             Items = items.ToList();
         }
 
@@ -35,7 +36,7 @@ namespace Hyper
         /// The self.
         /// </value>
         [HyperLink(Rel = "self")]
-        public HyperLink Self { get; set; }
+        public HyperLink<HyperList<T>> Self { get; set; }
 
         /// <summary>
         /// Gets or sets the items.

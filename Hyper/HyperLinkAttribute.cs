@@ -51,5 +51,14 @@ namespace Hyper
         /// </value>
         [HyperMember(Name = "templated")]
         public bool IsTemplated { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is embedded.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is embedded; otherwise, <c>false</c>.
+        /// </value>
+        [HyperMember(Name = "embedded")]
+        public bool IsEmbedded { get; set; }
     }
 }

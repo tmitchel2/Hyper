@@ -5,24 +5,26 @@ using System.Threading.Tasks;
 namespace Hyper
 {
     /// <summary>
-    /// HyperLinkList class.
+    /// HyperListLink class.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [HyperContract(Name = "hyperlinklist", MediaType = "application/vnd.hyper.hyperlinklist", Version = "1.0.0.0")]
-    public class HyperLinkList<T>
+    public class HyperListLink<T> where T : IHyperEntity<T>
     {
+        public static readonly HyperListLink<T> Empty = new HyperListLink<T>();
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="HyperLinkList{T}" /> class.
+        /// Initializes a new instance of the <see cref="HyperListLink{T}" /> class.
         /// </summary>
-        public HyperLinkList()
+        public HyperListLink()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HyperLinkList{T}" /> class.
+        /// Initializes a new instance of the <see cref="HyperListLink{T}" /> class.
         /// </summary>
         /// <param name="href">The href.</param>
-        public HyperLinkList(string href)
+        public HyperListLink(string href)
         {
             Href = href;
         }
@@ -35,6 +37,15 @@ namespace Hyper
         /// </value>
         [HyperMember(Name = "href")]
         public string Href { get; set; }
+
+        /// <summary>
+        /// Gets or sets the embedded.
+        /// </summary>
+        /// <value>
+        /// The embedded.
+        /// </value>
+        [HyperMember(Name = "embedded", IsOptional = true)]
+        public IList<T> Embedded { get; set; }
 
         /// <summary>
         /// Posts the specified item.

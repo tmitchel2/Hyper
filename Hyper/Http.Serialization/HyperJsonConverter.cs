@@ -45,55 +45,28 @@ namespace Hyper.Http.Serialization
         public override object Deserialize(IDictionary<string, object> dictionary, Type type, JavaScriptSerializer serializer)
         {
             var obj = Activator.CreateInstance(type);
-
-            // Deserialise members
-            foreach (var member in dictionary)
+            foreach (var item in dictionary)
             {
-                var prop = obj
+                // Deserialise member
+                var memberProp = obj
                     .GetType()
                     .GetProperties()
-                    .SingleOrDefault(p => IsMember(p) && GetMemberName(p) == member.Key);
+                    .SingleOrDefault(p => IsMember(p) && GetMemberName(p) == item.Key);
 
-                if (prop != null)
+                if (memberProp != null)
                 {
-                    SetMemberValue(obj, prop, member.Value, serializer);
+                    SetMemberValue(obj, memberProp, item.Value, serializer);
                 }
-            }
 
-            // Deserialise links
-            object linkObjs;
-            if (dictionary.TryGetValue("_links", out linkObjs))
-            {
-                var links = (IDictionary<string, object>)linkObjs;
-                foreach (var link in links)
-                {
-                    var prop = obj
+                // Deserialise link
+                var linkProp = obj
                         .GetType()
                         .GetProperties()
-                        .SingleOrDefault(p => IsLink(p) && GetLinkName(p) == link.Key);
+                        .SingleOrDefault(p => IsLink(p) && GetLinkName(p) == item.Key);
 
-                    if (prop != null)
-                    {
-                        SetLinkValue(obj, prop, link.Value, serializer);
-                    }
-                }
-            }
-
-            object embeddedObjs;
-            if (dictionary.TryGetValue("_embedded", out embeddedObjs))
-            {
-                var embeddeds = (IDictionary<string, object>)embeddedObjs;
-                foreach (var embedded in embeddeds)
+                if (linkProp != null)
                 {
-                    var prop = obj
-                        .GetType()
-                        .GetProperties()
-                        .SingleOrDefault(p => IsEmbedded(p) && GetEmbeddedName(p) == embedded.Key);
-
-                    if (prop != null)
-                    {
-                        SetEmbeddedValue(obj, prop, embedded.Value, serializer);
-                    }
+                    SetLinkValue(obj, linkProp, item.Value, serializer);
                 }
             }
 
@@ -126,27 +99,13 @@ namespace Hyper.Http.Serialization
             var links = obj
                 .GetType()
                 .GetProperties()
-                .Where(prop => IsLinksSerialised(prop, obj))
+                .Where(prop => IsLinkSerialised(prop, obj))
                 .ToDictionary(GetLinkName, f => GetLinkValue(f, obj, serializer));
 
-            if (links.Any())
-            {
-                items.Add("_links", links);
-            }
-
-            // Serialise embedded
-            var embedded = obj
-                .GetType()
-                .GetProperties()
-                .Where(prop => IsEmbeddedSerialised(prop, obj))
-                .ToDictionary(GetEmbeddedName, f => GetEmbeddedValue(f, obj, serializer));
-
-            if (embedded.Any())
-            {
-                items.Add("_embedded", embedded);
-            }
-
-            return items;
+            // Merge dictionaries
+            return items
+                .Concat(links)
+                .ToDictionary(kv => kv.Key, kv => kv.Value);
         }
         
         /// <summary>
@@ -159,18 +118,6 @@ namespace Hyper.Http.Serialization
         private static bool IsLink(PropertyInfo prop)
         {
             return prop.GetCustomAttribute<HyperLinkAttribute>() != null;
-        }
-
-        /// <summary>
-        /// Determines whether the specified prop is embedded.
-        /// </summary>
-        /// <param name="prop">The prop.</param>
-        /// <returns>
-        ///   <c>true</c> if the specified prop is embedded; otherwise, <c>false</c>.
-        /// </returns>
-        private static bool IsEmbedded(PropertyInfo prop)
-        {
-            return prop.GetCustomAttribute<HyperEmbeddedAttribute>() != null;
         }
 
         /// <summary>
@@ -224,7 +171,7 @@ namespace Hyper.Http.Serialization
         /// <returns>
         ///   <c>true</c> if [is links serialised] [the specified prop]; otherwise, <c>false</c>.
         /// </returns>
-        private static bool IsLinksSerialised(PropertyInfo prop, object obj)
+        private static bool IsLinkSerialised(PropertyInfo prop, object obj)
         {
             var attr = prop.GetCustomAttribute<HyperLinkAttribute>();
             if (attr == null)
@@ -240,32 +187,7 @@ namespace Hyper.Http.Serialization
 
             return true;
         }
-
-        /// <summary>
-        /// Determines whether [is embedded serialised] [the specified prop].
-        /// </summary>
-        /// <param name="prop">The prop.</param>
-        /// <param name="obj">The obj.</param>
-        /// <returns>
-        ///   <c>true</c> if [is embedded serialised] [the specified prop]; otherwise, <c>false</c>.
-        /// </returns>
-        private static bool IsEmbeddedSerialised(PropertyInfo prop, object obj)
-        {
-            var attr = prop.GetCustomAttribute<HyperEmbeddedAttribute>();
-            if (attr == null)
-            {
-                return false;
-            }
-
-            var value = prop.GetGetMethod().Invoke(obj, new object[] { });
-            if (value is IList)
-            {
-                return (value as IList).Count > 0;
-            }
-
-            return true;
-        }
-
+        
         /// <summary>
         /// Gets the default value.
         /// </summary>
@@ -286,18 +208,7 @@ namespace Hyper.Http.Serialization
             var attr = prop.GetCustomAttribute<HyperLinkAttribute>();
             return attr.Rel ?? prop.Name;
         }
-
-        /// <summary>
-        /// Gets the name of the embedded.
-        /// </summary>
-        /// <param name="prop">The prop.</param>
-        /// <returns></returns>
-        private static string GetEmbeddedName(PropertyInfo prop)
-        {
-            var attr = prop.GetCustomAttribute<HyperEmbeddedAttribute>();
-            return attr.Rel ?? prop.Name;
-        }
-
+        
         /// <summary>
         /// Gets the member value.
         /// </summary>
@@ -413,23 +324,6 @@ namespace Hyper.Http.Serialization
         }
 
         /// <summary>
-        /// Sets the embedded value.
-        /// </summary>
-        /// <param name="obj">The obj.</param>
-        /// <param name="prop">The prop.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="serializer">The serializer.</param>
-        private void SetEmbeddedValue(object obj, PropertyInfo prop, object value, JavaScriptSerializer serializer)
-        {
-            if (value is IDictionary<string, object>)
-            {
-                value = Deserialize(value as IDictionary<string, object>, prop.PropertyType, serializer);
-            }
-
-            SetMemberValue(obj, prop, value, serializer);
-        }
-        
-        /// <summary>
         /// Gets the link value.
         /// </summary>
         /// <param name="prop">The prop.</param>
@@ -439,34 +333,11 @@ namespace Hyper.Http.Serialization
         private object GetLinkValue(PropertyInfo prop, object obj, JavaScriptSerializer serializer)
         {
             var value = prop.GetGetMethod().Invoke(obj, new object[] { });
-            if (value is IList<HyperLink>)
+            if (value is IList<HyperLink<object>>)
             {
-                return (value as IList<HyperLink>).Select(f => Serialize(f, serializer)).ToList();
+                return (value as IList<HyperLink<object>>).Select(f => Serialize(f, serializer)).ToList();
             }
             
-            return Serialize(value, serializer);
-        }
-
-        /// <summary>
-        /// Gets the embedded value.
-        /// </summary>
-        /// <param name="prop">The prop.</param>
-        /// <param name="obj">The obj.</param>
-        /// <param name="serializer">The serializer.</param>
-        /// <returns></returns>
-        private object GetEmbeddedValue(PropertyInfo prop, object obj, JavaScriptSerializer serializer)
-        {
-            var value = prop.GetGetMethod().Invoke(obj, new object[] { });
-            if (value is IList<HyperMember>)
-            {
-                return (value as IList<HyperMember>).Select(f => Serialize(f, serializer)).ToList();
-            }
-            
-            if (value is IList<HyperLink>)
-            {
-                return (value as IList<HyperLink>).Select(f => Serialize(f, serializer)).ToList();
-            }
-
             return Serialize(value, serializer);
         }
     }

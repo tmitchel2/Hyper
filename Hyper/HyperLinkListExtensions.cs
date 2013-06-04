@@ -15,7 +15,7 @@ namespace Hyper
         /// <param name="id">The id.</param>
         /// <param name="client">The client.</param>
         /// <returns></returns>
-        public static Task<T> Get<T>(this HyperLinkList<T> list, long id, HyperClient client)
+        public static Task<T> Get<T>(this HyperListLink<T> list, long id, HyperClient client) where T : IHyperEntity<T>
         {
             return list.Get(id.ToString(), client);
         }
@@ -28,7 +28,7 @@ namespace Hyper
         /// <param name="id">The id.</param>
         /// <param name="client">The client.</param>
         /// <returns></returns>
-        public static Task<T> Get<T>(this HyperLinkList<T> list, int id, HyperClient client)
+        public static Task<T> Get<T>(this HyperListLink<T> list, int id, HyperClient client) where T : IHyperEntity<T>
         {
             return list.Get(id.ToString(), client);
         }

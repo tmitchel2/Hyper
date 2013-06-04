@@ -65,7 +65,7 @@
     <Compile Include="HyperEmbeddedAttribute.cs" />
     <Compile Include="HyperEntityExtensions.cs" />
     <Compile Include="Http.Serialization\HyperJsonConverter.cs" />
-    <Compile Include="HyperLinkList.cs" />
+    <Compile Include="HyperListLink.cs" />
     <Compile Include="HyperLink.cs" />
     <Compile Include="HyperLinkAttribute.cs" />
     <Compile Include="HyperLinkListExtensions.cs" />
