@@ -10,7 +10,7 @@ namespace HyperTests.Controllers
         [AllowAnonymous]
         public HyperList<User> Get()
         {
-            return new HyperList<User> { Self = new HyperLink(GetRoute("User")) };
+            return new HyperList<User>(new HyperLink<HyperList<User>>(GetRoute("User")), new User[] { });
         }
 
         private string GetRoute(string controller, string id = null)

@@ -17,12 +17,12 @@ namespace HyperTests.Controllers
         {
             if (!Thread.CurrentPrincipal.Identity.IsAuthenticated)
             {
-                return new HyperList<Session> { Self = new HyperLink(GetRoute("Session")) };
+                return new HyperList<Session>(new HyperLink<HyperList<Session>>(GetRoute("Session")), new Session[] {});
             }
 
             return new HyperList<Session>
                 {
-                    Self = new HyperLink(GetRoute("Session")),
+                    Self = new HyperLink<HyperList<Session>>(GetRoute("Session")),
                     Items = new List<Session> { GetCurrentSession() }
                 };
         }
@@ -32,10 +32,10 @@ namespace HyperTests.Controllers
             const int sessionId = 1;
             return new Session
             {
-                Self = new HyperLink(GetRoute("Session", sessionId.ToString())),
+                Self = new HyperLink<Session>(GetRoute("Session", sessionId.ToString())),
                 Id = sessionId,
                 Username = Thread.CurrentPrincipal.Identity.Name,
-                User = new HyperLink(GetRoute("User", sessionId.ToString()))
+                User = new HyperLink<User>(GetRoute("User", sessionId.ToString()))
             };
         }
 
@@ -59,8 +59,8 @@ namespace HyperTests.Controllers
             return new Session
                 {
                     Id = 1,
-                    Self = new HyperLink(GetRoute("Session", "1")),
-                    User = new HyperLink(GetRoute("User", "1"))
+                    Self = new HyperLink<Session>(GetRoute("Session", "1")),
+                    User = new HyperLink<User>(GetRoute("User", "1"))
                 };
         }
 

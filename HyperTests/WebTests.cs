@@ -3,15 +3,21 @@ using System.Threading.Tasks;
 using System.Web.Http.SelfHost;
 using Hyper;
 using HyperTests.Models;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace HyperTests
 {
-    [TestClass]
+    [TestFixture]
     public class WebTests
     {
-        [TestMethod]
-        public async Task HelperWebTest()
+        [Test]
+        public void SimpleTest()
+        {
+            var task = SimpleTestAsync();
+            task.Wait();
+        }
+
+        public async Task SimpleTestAsync()
         {
             var url = @"http://localhost:8352";
             var server = GetServer(url);

@@ -4,15 +4,15 @@ using Hyper.Http;
 namespace HyperTests.Models
 {
     [HyperContract(Name = "session", MediaType = "application/vnd.hypertests.session", Version="1.0.0.0")]
-    public class Session : IHyperEntity, IHasBasicAuthicationDetails
+    public class Session : IHyperEntity<Session>, IHasBasicAuthicationDetails
     {
         public readonly static Session Empty = new Session();
 
         public Session()
         {
-            Self = HyperLink.Empty;
+            Self = HyperLink<Session>.Empty;
             Id = 0;
-            User = HyperLink.Empty;
+            User = HyperLink<User>.Empty;
         }
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace HyperTests.Models
         /// The self.
         /// </value>
         [HyperLink(Rel = "self")]
-        public HyperLink Self { get; set; }
+        public HyperLink<Session> Self { get; set; }
 
         /// <summary>
         /// Gets or sets the id.
@@ -58,7 +58,7 @@ namespace HyperTests.Models
         /// The user.
         /// </value>
         [HyperLink(Rel = "user")]
-        public HyperLink User { get; set; }
+        public HyperLink<User> User { get; set; }
 
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.

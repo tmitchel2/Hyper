@@ -20,13 +20,13 @@ namespace HyperTests.Controllers
         {
             return new Api
                 {
-                    Self = new HyperLink(ControllerContext.Request.RequestUri.ToString()),
+                    Self = new HyperLink<Api>(ControllerContext.Request.RequestUri.ToString()),
                     Name = Assembly.GetExecutingAssembly().GetName().Name,
                     Version = Assembly.GetExecutingAssembly().GetName().Version,
-                    Types = new HyperLinkList<HyperType>(GetRoute("Type")),
-                    Sessions = new HyperLinkList<Session>(GetRoute("Session")),
-                    Users = new HyperLinkList<User>(GetRoute("User")),
-                    Messages = new HyperLinkList<Message>(GetRoute("Message"))
+                    Types = new HyperListLink<HyperType>(GetRoute("Type")),
+                    Sessions = new HyperListLink<Session>(GetRoute("Session")),
+                    Users = new HyperListLink<User>(GetRoute("User")),
+                    Messages = new HyperListLink<Message>(GetRoute("Message"))
                 };
         }
 

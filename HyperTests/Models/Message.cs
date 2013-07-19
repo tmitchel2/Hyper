@@ -3,7 +3,7 @@ using Hyper;
 namespace HyperTests.Models
 {
     [HyperContract(Name = "message", MediaType = "application/vnd.hypertests.message", Version = "1.0.0.0")]
-    public class Message : IHyperEntity
+    public class Message : IHyperEntity<Message>
     {
         public readonly static Message Empty = new Message();
 
@@ -12,7 +12,7 @@ namespace HyperTests.Models
         /// </summary>
         public Message()
         {
-            Self = HyperLink.Empty;
+            Self = HyperLink<Message>.Empty;
         }
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace HyperTests.Models
         /// The self.
         /// </value>
         [HyperLink(Rel = "self")]
-        public HyperLink Self { get; set; }
+        public HyperLink<Message> Self { get; set; }
 
         /// <summary>
         /// Gets or sets the text.

@@ -14,7 +14,7 @@ namespace HyperTests.Controllers
         [AllowAnonymous]
         public HyperList<HyperType> Get()
         {
-            return new HyperList<HyperType>(Types) { Self = new HyperLink(GetRoute("Type")) };
+            return new HyperList<HyperType>(new HyperLink<HyperList<HyperType>>(GetRoute("Types")), Types);
         }
 
         [AllowAnonymous]
@@ -64,7 +64,7 @@ namespace HyperTests.Controllers
             {
                 Name = typeName,
                 MediaType = GetMediaType(type),
-                Self = new HyperLink(GetRoute("Type", type.Name)),
+                Self = new HyperLink<HyperType>(GetRoute("Types", type.Name)),
                 Members = GetMembers(type).ToList(),
                 Links = GetLinks(type).ToList()
             };
@@ -99,13 +99,13 @@ namespace HyperTests.Controllers
                     });
         }
 
-        private IEnumerable<HyperLink> GetLinks(Type type)
+        private static IEnumerable<HyperLink<HyperType>> GetLinks(Type type)
         {
             return type
                 .GetProperties()
                 .Where(prop => prop.GetCustomAttribute<HyperLinkAttribute>() != null)
                 .Select(prop => prop.GetCustomAttribute<HyperLinkAttribute>().Rel)
-                .Select(name => new HyperLink { Name = name });
+                .Select(name => new HyperLink<HyperType> { Name = name });
         }
 
         private string GetRoute(string controller, string id = null)

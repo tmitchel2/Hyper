@@ -6,7 +6,7 @@ namespace HyperTests.Models
     /// User class.
     /// </summary>
     [HyperContract(Name = "user", MediaType = "application/vnd.hypertests.user", Version = "1.0.0.0")]
-    public class User : IHyperEntity
+    public class User : IHyperEntity<User>
     {
         public readonly static User Empty = new User();
 
@@ -15,7 +15,7 @@ namespace HyperTests.Models
         /// </summary>
         public User()
         {
-            Self = HyperLink.Empty;
+            Self = HyperLink<User>.Empty;
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace HyperTests.Models
         /// The self.
         /// </value>
         [HyperLink(Rel = "self")]
-        public HyperLink Self { get; set; }
+        public HyperLink<User> Self { get; set; }
 
         /// <summary>
         /// Gets or sets the email.

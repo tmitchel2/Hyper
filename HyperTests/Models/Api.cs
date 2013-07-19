@@ -7,7 +7,7 @@ namespace HyperTests.Models
     /// Api class.
     /// </summary>
     [HyperContract(Name = "api", MediaType = "application/vnd.hypertests.api", Version = "1.0.0.0")]
-    public class Api : IHyperEntity
+    public class Api : IHyperEntity<Api>
     {
         /// <summary>
         /// Gets or sets the self.
@@ -16,7 +16,7 @@ namespace HyperTests.Models
         /// The self.
         /// </value>
         [HyperLink(Rel = "self")]
-        public HyperLink Self { get; set; }
+        public HyperLink<Api> Self { get; set; }
 
         /// <summary>
         /// Gets or sets the name.
@@ -43,7 +43,7 @@ namespace HyperTests.Models
         /// The types.
         /// </value>
         [HyperLink(Rel = "types")]
-        public HyperLinkList<HyperType> Types { get; set; }
+        public HyperListLink<HyperType> Types { get; set; }
         
         /// <summary>
         /// Gets or sets the sessions.
@@ -52,7 +52,7 @@ namespace HyperTests.Models
         /// The sessions.
         /// </value>
         [HyperLink(Rel = "sessions")]
-        public HyperLinkList<Session> Sessions { get; set; }
+        public HyperListLink<Session> Sessions { get; set; }
 
         /// <summary>
         /// Gets or sets the users.
@@ -61,7 +61,7 @@ namespace HyperTests.Models
         /// The users.
         /// </value>
         [HyperLink(Rel = "users")]
-        public HyperLinkList<User> Users { get; set; }
+        public HyperListLink<User> Users { get; set; }
 
         /// <summary>
         /// Gets or sets the messages.
@@ -70,7 +70,7 @@ namespace HyperTests.Models
         /// The messages.
         /// </value>
         [HyperLink(Rel = "messages")]
-        public HyperLinkList<Message> Messages { get; set; }
+        public HyperListLink<Message> Messages { get; set; }
 
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.

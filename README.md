@@ -18,69 +18,69 @@ A hypermedia api framework for building fully REST compliant internet scale web 
 
 ## Example
 ### Client
-    using (var client = new HyperClient())
+    using (var client = new HyperClient(Application.GetTypes()))
     {
       // Get Api
-      var api = await client.Get<Api>(@"http://api.example.com");
+      var api = await client.Get<Api>(@"http://localhost:80");
       
       // Login - Create a session object using HTTP POST
       var session = await api.Sessions.Post(new Session { Username = "username", Password = "password" }, client);
       
       // Logout - Delete the session object using HTTP DELETE
-      await session.Delete(client);
+      await session.Delete(client, HttpStatusCode.Unauthorized);
     }
 
 ### Server
-    var config = new HyperHttpSelfHostConfiguration(@"http://api.example.com", false);
-    config.UseAuthenticationCookie = true;
+
+    // Configuration
+    var config = new HyperHttpSelfHostConfiguration"http://localhost:80", false);
     config.AuthenticationCookieName = "hyper-auth";
     config.WebApiUserNamePasswordValidator = new HyperUserNamePasswordValidator();
-
-    // Init routes
     config.Routes.MapHttpRouteLowercase(
         name: "DefaultApi",
         routeTemplate: "{controller}/{id}",
         defaults: new { id = RouteParameter.Optional, controller = "Root" });
 
-    // Init media type formatters
     var types = GetTypes();
     config.Formatters.Remove(config.Formatters.JsonFormatter);
     config.Formatters.Add(new HyperJsonMediaTypeFormatter(types));
     config.Formatters.Add(new HyperXmlMediaTypeFormatter(types));
-    
-    // Init message handlers and filters
-    config.MessageHandlers.Add(new RestQueryParameterHandler());    
+    config.MessageHandlers.Add(new RestQueryParameterHandler());
     config.MessageHandlers.Add(new AuthenticationHandler(config));
-    config.Filters.Add(new BasicAuthenticationAttribute());
-    
+    config.Filters.Add(new BasicAuthenticationAttribute(config));
+    config.Services.Replace(typeof(ITraceWriter), new SimpleTracer());
+
     // Start server
     var server = new HttpSelfHostServer(config);
     server.OpenAsync().Wait();
     Console.ReadKey();
-
+    
 ### Server Model
-    [HalContract]
-    public class Api : IHalEntity
+    [HyperContract(Name = "api", MediaType = "application/vnd.hypertests.api", Version = "1.0.0.0")]
+    public class Api : IHyperEntity<Api>
     {
-        [HalLink(Rel = "self")]
-        public HalLink Self { get; set; }
+        [HyperLink(Rel = "self")]
+        public HyperLink<Api> Self { get; set; }
 
-        [HalMember(Name = "name")]
+        [HyperMember(Name = "name")]
         public string Name { get; set; }
 
-        [HalMember(Name = "version")]
+        [HyperMember(Name = "version")]
         public Version Version { get; set; }
 
-        [HalLink(Rel = "types")]
-        public HalLinkList<HalType> Types { get; set; }
+        [HyperLink(Rel = "types")]
+        public HyperListLink<HyperType> Types { get; set; }
         
-        [HalLink(Rel = "sessions")]
-        public HalLinkList<Session> Sessions { get; set; }
+        [HyperLink(Rel = "sessions")]
+        public HyperListLink<Session> Sessions { get; set; }
 
-        [HalLink(Rel = "users")]
-        public HalLinkList<User> Users { get; set; }
+        [HyperLink(Rel = "users")]
+        public HyperListLink<User> Users { get; set; }
+
+        [HyperLink(Rel = "messages")]
+        public HyperListLink<Message> Messages { get; set; }
     }
-    
+
 ### Server Controller
     public class RootController : ApiController
     {
@@ -89,13 +89,13 @@ A hypermedia api framework for building fully REST compliant internet scale web 
         {
             return new Api
                 {
-                    Self = new HyperLink(ControllerContext.Request.RequestUri.ToString()),
+                    Self = new HyperLink<Api>(ControllerContext.Request.RequestUri.ToString()),
                     Name = Assembly.GetExecutingAssembly().GetName().Name,
                     Version = Assembly.GetExecutingAssembly().GetName().Version,
-                    Types = new HyperLinkList<HyperType>(GetRoute("Type")),
-                    Sessions = new HyperLinkList<Session>(GetRoute("Session")),
-                    Users = new HyperLinkList<User>(GetRoute("User")),
-                    Messages = new HyperLinkList<Message>(GetRoute("Message"))
+                    Types = new HyperListLink<HyperType>(GetRoute("Type")),
+                    Sessions = new HyperListLink<Session>(GetRoute("Session")),
+                    Users = new HyperListLink<User>(GetRoute("User")),
+                    Messages = new HyperListLink<Message>(GetRoute("Message"))
                 };
         }
 
@@ -106,24 +106,29 @@ A hypermedia api framework for building fully REST compliant internet scale web 
     }
     
 ### Hypermedia Json
+- Run HyperTests project as exe
+- Navigate to http://localhost/?accept=application/json
+
     {
         "name": "HyperTests",
         "version": "0.0.1.0",
-        "_links": {
-            "self": {
-                "href": "http://api.example.com/?accept=application/json"
-            },
-            "types": {
-                "href": "http://api.example.com/type?accept=application/json"
-            },
-            "sessions": {
-                "href": "http://api.example.com/session?accept=application/json"
-            },
-            "users": {
-                "href": "http://api.example.com/user?accept=application/json"
-            },
-            "messages": {
-                "href": "http://api.example.com/message?accept=application/json"
-            }
-        }
+        "self": {
+        "href": "http://localhost/?accept=application/json"
+    },
+        "types": {
+        "href": "http://localhost/type?accept=application/json"
+    },
+        "sessions": {
+        "href": "http://localhost/session?accept=application/json"
+    },
+        "users": {
+        "href": "http://localhost/user?accept=application/json"
+    },
+        "messages": {
+        "href": "http://localhost/message?accept=application/json"
     }
+}
+
+## Status
+
+Hyper is work in progress but development is active.  Questions on usage accepted.
