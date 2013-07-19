@@ -106,28 +106,28 @@ A hypermedia api framework for building fully REST compliant internet scale web 
     }
     
 ### Hypermedia Json
-- Run HyperTests project as exe
-- Navigate to http://localhost/?accept=application/json
+Run HyperTests project as exe
+Navigate to http://localhost/?accept=application/json
 
     {
         "name": "HyperTests",
         "version": "0.0.1.0",
         "self": {
-        "href": "http://localhost/?accept=application/json"
-    },
+            "href": "http://localhost/?accept=application/json"
+        },
         "types": {
-        "href": "http://localhost/type?accept=application/json"
-    },
+            "href": "http://localhost/type?accept=application/json"
+        },
         "sessions": {
-        "href": "http://localhost/session?accept=application/json"
-    },
+            "href": "http://localhost/session?accept=application/json"
+        },
         "users": {
-        "href": "http://localhost/user?accept=application/json"
-    },
+            "href": "http://localhost/user?accept=application/json"
+        },
         "messages": {
-        "href": "http://localhost/message?accept=application/json"
+            "href": "http://localhost/message?accept=application/json"
+        }
     }
-}
 
 ## Status
 
