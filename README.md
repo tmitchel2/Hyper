@@ -106,8 +106,7 @@ A hypermedia api framework for building fully REST compliant internet scale web 
     }
     
 ### Hypermedia Json
-Run HyperTests project as exe
-Navigate to http://localhost/?accept=application/json
+Run the HyperTests project and navigate to http://localhost/?accept=application/json
 
     {
         "name": "HyperTests",
