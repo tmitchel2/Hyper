@@ -3,7 +3,6 @@ using System.IO;
 using System.Net;
 using System.Net.Http.Formatting;
 using System.Threading.Tasks;
-using Hyper.Http.Formatting;
 using Newtonsoft.Json;
 
 namespace HyperTests.Http.Formatting
@@ -15,12 +14,12 @@ namespace HyperTests.Http.Formatting
     {
         public override bool CanReadType(Type type)
         {
-            return HyperMediaTypeFormatter.CanReadAndWriteType(type);
+            return Hyper.Http.Formatting.MediaTypeFormatterExtensions.CanReadAndWriteType(type);
         }
 
         public override bool CanWriteType(Type type)
         {
-            return HyperMediaTypeFormatter.CanReadAndWriteType(type);
+            return Hyper.Http.Formatting.MediaTypeFormatterExtensions.CanReadAndWriteType(type);
         }
 
         /// <summary>

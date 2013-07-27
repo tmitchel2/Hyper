@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http.Formatting;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -48,7 +49,7 @@ namespace HyperTests
             await server.CloseAsync();
         }
 
-        protected abstract HyperMediaTypeFormatter GetHyperMediaTypeFormatter(IEnumerable<Type> types);
+        protected abstract MediaTypeFormatter GetHyperMediaTypeFormatter(IEnumerable<Type> types);
 
         private HttpSelfHostServer GetServer(string url)
         {
@@ -66,7 +67,7 @@ namespace HyperTests
                 defaults: new { id = RouteParameter.Optional, controller = "Root" });
 
             config.Formatters.Remove(config.Formatters.JsonFormatter);
-            config.Formatters.Add(GetHyperMediaTypeFormatter(Application.GetTypes()).Formatter);
+            config.Formatters.Add(GetHyperMediaTypeFormatter(Application.GetTypes()));
             config.MessageHandlers.Add(new RestQueryParameterHandler());
             config.MessageHandlers.Add(new AuthenticationHandler(config));
             config.Filters.Add(new BasicAuthenticationAttribute(config));
@@ -79,6 +80,7 @@ namespace HyperTests
         {
             var config = new HyperClientConfiguration();
             config.Formatters.Add(GetHyperMediaTypeFormatter(Application.GetTypes()));
+            config.DefaultFormatter = config.Formatters[0];
             return new HyperClient(config);
         }
     }

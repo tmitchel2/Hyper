@@ -3,70 +3,46 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Web.Http;
 
 namespace Hyper.Http.Formatting
 {
     /// <summary>
-    /// IHyperMediaTypeFormatter interface.
+    /// MediaTypeFormatterExtensions class.
     /// </summary>
-    public class HyperMediaTypeFormatter
+    public static class MediaTypeFormatterExtensions
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="HyperMediaTypeFormatter" /> class.
+        /// To the hyper formatter.
         /// </summary>
-        /// <param name="mediaTypeName">Name of the media type.</param>
         /// <param name="formatter">The formatter.</param>
+        /// <param name="mediaTypeName">Name of the media type.</param>
         /// <param name="types">The types.</param>
-        public HyperMediaTypeFormatter(string mediaTypeName, MediaTypeFormatter formatter, IEnumerable<Type> types)
+        /// <returns></returns>
+        public static MediaTypeFormatter ToHyperFormatter(this MediaTypeFormatter formatter, string mediaTypeName, IEnumerable<Type> types)
         {
-            MediaTypeName = mediaTypeName;
-            Formatter = formatter;
-            DefaultEncoding = new UTF8Encoding(false, true);
-
-            Formatter.SupportedMediaTypes.Add(new MediaTypeWithQualityHeaderValue(string.Format("application/{0}", MediaTypeName)));
-            Formatter.SupportedMediaTypes.Add(new MediaTypeWithQualityHeaderValue(string.Format("application/vnd.httperror+{0}", MediaTypeName)));
+            formatter.SupportedMediaTypes.Add(new MediaTypeWithQualityHeaderValue(string.Format("application/{0}", mediaTypeName)));
+            formatter.SupportedMediaTypes.Add(new MediaTypeWithQualityHeaderValue(string.Format("application/vnd.httperror+{0}", mediaTypeName)));
             foreach (var type in types)
             {
-                Formatter.SupportedMediaTypes.Add(GetMediaType(type));    
+                formatter.SupportedMediaTypes.Add(formatter.GetMediaType(type));
             }
+
+            return formatter;
         }
-
-        /// <summary>
-        /// Gets the name of the media type.
-        /// </summary>
-        /// <value>
-        /// The name of the media type.
-        /// </value>
-        public string MediaTypeName { get; private set; }
-
-        /// <summary>
-        /// Gets the formatter.
-        /// </summary>
-        /// <value>
-        /// The formatter.
-        /// </value>
-        public MediaTypeFormatter Formatter { get; private set; }
-
-        /// <summary>
-        /// Gets the default encoding.
-        /// </summary>
-        /// <value>
-        /// The default encoding.
-        /// </value>
-        public Encoding DefaultEncoding { get; private set; }
 
         /// <summary>
         /// Gets the type of the media.
         /// </summary>
+        /// <param name="formatter">The formatter.</param>
         /// <param name="type">The type.</param>
-        /// <param name="mediaTypeName">Name of the media type.</param>
         /// <returns>
         /// MediaTypeWithQualityHeaderValue object.
         /// </returns>
-        public static MediaTypeWithQualityHeaderValue GetMediaType(Type type, string mediaTypeName)
+        public static MediaTypeWithQualityHeaderValue GetMediaType(this MediaTypeFormatter formatter, Type type)
         {
+            var mediaTypeName = formatter.GetMediaType();
+
             if (type == typeof(HttpError))
             {
                 return new MediaTypeWithQualityHeaderValue(string.Format("application/vnd.httperror+{0}", mediaTypeName));
@@ -87,6 +63,18 @@ namespace Hyper.Http.Formatting
                 .Cast<HyperContractAttribute>()
                 .Select(attribute => new MediaTypeWithQualityHeaderValue(string.Format(@"{0}+{1}", attribute.MediaType, mediaTypeName)))
                 .Single();
+        }
+
+        /// <summary>
+        /// Gets the type of the media.
+        /// </summary>
+        /// <param name="formatter">The formatter.</param>
+        /// <returns></returns>
+        public static string GetMediaType(this MediaTypeFormatter formatter)
+        {
+            var mediaType = formatter.SupportedMediaTypes[0];
+            var mediaTypeName = mediaType.MediaType.Substring(mediaType.MediaType.IndexOf(@"/", StringComparison.Ordinal) + 1);
+            return mediaTypeName;
         }
 
         /// <summary>
@@ -116,16 +104,6 @@ namespace Hyper.Http.Formatting
                 .GetCustomAttributes(typeof(HyperContractAttribute), true)
                 .Cast<HyperContractAttribute>()
                 .Any();
-        }
-
-        /// <summary>
-        /// Gets the type of the media.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns></returns>
-        public MediaTypeWithQualityHeaderValue GetMediaType(Type type)
-        {
-            return GetMediaType(type, MediaTypeName);
         }
     }
 }

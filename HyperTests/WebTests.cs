@@ -48,7 +48,9 @@ namespace HyperTests
         private static HyperClient GetClient()
         {
             var config = new HyperClientConfiguration();
-            config.Formatters.Add(new HyperMediaTypeFormatter("json", new JsonMediaTypeFormatter(), Application.GetTypes()));
+            config.Formatters.Clear();
+            config.Formatters.Add(new JsonMediaTypeFormatter().ToHyperFormatter("json", Application.GetTypes()));
+            config.DefaultFormatter = config.Formatters[0];
             return new HyperClient(config);
         }
     }

@@ -7,7 +7,6 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Threading.Tasks;
-using Hyper.Http.Formatting;
 using MsgPack;
 using MsgPack.Serialization;
 
@@ -17,12 +16,12 @@ namespace HyperTests.Http.Formatting
     {
         public override bool CanReadType(Type type)
         {
-            return HyperMediaTypeFormatter.CanReadAndWriteType(type);
+            return Hyper.Http.Formatting.MediaTypeFormatterExtensions.CanReadAndWriteType(type);
         }
 
         public override bool CanWriteType(Type type)
         {
-            return HyperMediaTypeFormatter.CanReadAndWriteType(type);
+            return Hyper.Http.Formatting.MediaTypeFormatterExtensions.CanReadAndWriteType(type);
         }
 
         public override Task WriteToStreamAsync(Type type, object value, Stream stream, HttpContent content, TransportContext transportContext)

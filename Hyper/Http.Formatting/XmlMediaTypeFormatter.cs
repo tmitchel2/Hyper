@@ -17,7 +17,7 @@ namespace Hyper.Http.Formatting
         /// </returns>
         public override bool CanReadType(Type type)
         {
-            return HyperMediaTypeFormatter.CanReadAndWriteType(type);
+            return MediaTypeFormatterExtensions.CanReadAndWriteType(type);
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Hyper.Http.Formatting
         /// </returns>
         public override bool CanWriteType(Type type)
         {
-            return HyperMediaTypeFormatter.CanReadAndWriteType(type);
+            return MediaTypeFormatterExtensions.CanReadAndWriteType(type);
         }
     }
 }

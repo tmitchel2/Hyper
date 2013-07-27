@@ -56,8 +56,8 @@
     <Compile Include="Http.Dispatcher\HyperHttpControllerSelector.cs" />
     <Compile Include="Http.Formatting\HyperHtmlMediaTypeFormatter.cs" />
     <Compile Include="Http.Formatting\JsonMediaTypeFormatter.cs" />
+    <Compile Include="Http.Formatting\MediaTypeFormatterExtensions.cs" />
     <Compile Include="Http.Formatting\XmlMediaTypeFormatter.cs" />
-    <Compile Include="Http.Formatting\HyperMediaTypeFormatter.cs" />
     <Compile Include="Http.SelfHost\HyperHttpSelfHostConfiguration.cs" />
     <Compile Include="Http.Serialization\HyperSerialiser.cs" />
     <Compile Include="Http\DictionaryExtensions.cs" />

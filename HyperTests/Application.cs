@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net.Http.Formatting;
-using System.Net.Http.Headers;
 using System.ServiceModel;
 using System.Web.Http;
 using System.Web.Http.SelfHost;
@@ -58,7 +56,7 @@ namespace HyperTests
                 defaults: new { id = RouteParameter.Optional, controller = "Root" });
 
             config.Formatters.Remove(config.Formatters.JsonFormatter);
-            
+            config.Formatters.AddRange(GetHyperMediaTypeFormatters());
             config.MessageHandlers.Add(new RestQueryParameterHandler());
             config.MessageHandlers.Add(new AuthenticationHandler(config));
             config.Filters.Add(new BasicAuthenticationAttribute(config));
@@ -66,14 +64,15 @@ namespace HyperTests
             return config;
         }
 
-        private static IEnumerable<HyperMediaTypeFormatter> GetHyperMediaTypeFormatters()
+        private static IEnumerable<MediaTypeFormatter> GetHyperMediaTypeFormatters()
         {
             return new[]
                 {
-                    new HyperMediaTypeFormatter("json", new Hyper.Http.Formatting.JsonMediaTypeFormatter(), GetTypes()),
-                    new HyperMediaTypeFormatter("bson", new NewtonsoftBsonMediaTypeFormatter(), GetTypes()),
-                    new HyperMediaTypeFormatter("xml", new XmlMediaTypeFormatter(), GetTypes()),
-                    new HyperMediaTypeFormatter("msgpack", new MsgPackMediaTypeFormatter(), GetTypes())
+                    // new HyperMediaTypeFormatter("json", new Hyper.Http.Formatting.JsonMediaTypeFormatter(), GetTypes()),
+                    new NewtonsoftJsonMediaTypeFormatter().ToHyperFormatter("json", GetTypes()),
+                    new NewtonsoftBsonMediaTypeFormatter().ToHyperFormatter("bson", GetTypes()),
+                    new XmlMediaTypeFormatter().ToHyperFormatter("xml", GetTypes()),
+                    new MsgPackMediaTypeFormatter().ToHyperFormatter("msgpack", GetTypes())
                 };
         }
 

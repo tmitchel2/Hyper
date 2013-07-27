@@ -17,7 +17,7 @@ namespace HyperTests.Http.Formatting
     {
         public override bool CanConvert(Type objectType)
         {
-            return HyperMediaTypeFormatter.CanReadAndWriteType(objectType);
+            return MediaTypeFormatterExtensions.CanReadAndWriteType(objectType);
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

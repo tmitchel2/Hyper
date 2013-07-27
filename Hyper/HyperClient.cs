@@ -27,7 +27,7 @@ namespace Hyper
         public HyperClient(HyperClientConfiguration configuration)
         {
             Configuration = configuration;
-            _serialiser = new HyperSerialiser(Configuration.Formatters[0].Formatter);
+            _serialiser = new HyperSerialiser(Configuration.DefaultFormatter);
             _httpClient = new HttpClient();
         }
 
@@ -48,7 +48,7 @@ namespace Hyper
         public async Task<T> Get<T>(string url)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, url);
-            request.Headers.Accept.Add(Configuration.Formatters[0].GetMediaType(typeof(T)));
+            request.Headers.Accept.Add(Configuration.DefaultFormatter.GetMediaType(typeof(T)));
             var result = await _httpClient.SendAsync(request);
             return await ProcessResult<T>(result);
         }
@@ -65,9 +65,9 @@ namespace Hyper
             var request = new HttpRequestMessage(HttpMethod.Post, url);
 
             // Add content
-            var mediaType = Configuration.Formatters[0].GetMediaType(typeof(T));
+            var mediaType = Configuration.DefaultFormatter.GetMediaType(typeof(T));
             request.Headers.Accept.Add(mediaType);
-            request.Content = new StringContent(_serialiser.Serialise(item), Configuration.Formatters[0].DefaultEncoding, mediaType.ToString());
+            request.Content = new StringContent(_serialiser.Serialise(item), Configuration.DefaultEncoding, mediaType.ToString());
 
             // request.Content = new ObjectContent<T>(item, new HyperJsonMediaTypeFormatter(), mediaType.ToString())
 
