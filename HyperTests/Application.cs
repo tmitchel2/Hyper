@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Net.Http.Formatting;
+using System.Net.Http.Headers;
 using System.ServiceModel;
 using System.Web.Http;
 using System.Web.Http.SelfHost;
@@ -9,8 +13,10 @@ using Hyper.Http;
 using Hyper.Http.Formatting;
 using Hyper.Http.Routing;
 using Hyper.Http.SelfHost;
+using HyperTests.Http.Formatting;
 using HyperTests.IdentityModel.Selectors;
 using HyperTests.Models;
+using XmlMediaTypeFormatter = System.Net.Http.Formatting.XmlMediaTypeFormatter;
 
 namespace HyperTests
 {
@@ -51,10 +57,8 @@ namespace HyperTests
                 routeTemplate: "{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional, controller = "Root" });
 
-            var types = GetTypes();
             config.Formatters.Remove(config.Formatters.JsonFormatter);
-            config.Formatters.Add(new HyperJsonMediaTypeFormatter(types));
-            config.Formatters.Add(new HyperXmlMediaTypeFormatter(types));
+            
             config.MessageHandlers.Add(new RestQueryParameterHandler());
             config.MessageHandlers.Add(new AuthenticationHandler(config));
             config.Filters.Add(new BasicAuthenticationAttribute(config));
@@ -62,15 +66,33 @@ namespace HyperTests
             return config;
         }
 
+        private static IEnumerable<HyperMediaTypeFormatter> GetHyperMediaTypeFormatters()
+        {
+            return new[]
+                {
+                    new HyperMediaTypeFormatter("json", new Hyper.Http.Formatting.JsonMediaTypeFormatter(), GetTypes()),
+                    new HyperMediaTypeFormatter("bson", new NewtonsoftBsonMediaTypeFormatter(), GetTypes()),
+                    new HyperMediaTypeFormatter("xml", new XmlMediaTypeFormatter(), GetTypes()),
+                    new HyperMediaTypeFormatter("msgpack", new MsgPackMediaTypeFormatter(), GetTypes())
+                };
+        }
+
         public static Type[] GetTypes()
         {
-            var types = new[]
+            return new[]
                 {
-                    typeof(Api), typeof(HyperList<Api>), typeof(Session), typeof(HyperList<Session>), typeof(User),
-                    typeof(HyperList<User>), typeof(Message), typeof(HyperList<Message>), typeof(HyperType),
-                    typeof(HyperList<HyperType>), typeof(HyperList<>)
+                    typeof(Api), 
+                    typeof(HyperList<Api>), 
+                    typeof(Session),
+                    typeof(HyperList<Session>),
+                    typeof(User),
+                    typeof(HyperList<User>),
+                    typeof(Message), 
+                    typeof(HyperList<Message>), 
+                    typeof(HyperType),
+                    typeof(HyperList<HyperType>), 
+                    typeof(HyperList<>)
                 };
-            return types;
         }
 
         private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs args)

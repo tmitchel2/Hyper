@@ -22,7 +22,6 @@ namespace HyperTests.Controllers
                 {
                     Self = new HyperLink<Api>(ControllerContext.Request.RequestUri.ToString()),
                     Name = Assembly.GetExecutingAssembly().GetName().Name,
-                    Version = Assembly.GetExecutingAssembly().GetName().Version,
                     Types = new HyperListLink<HyperType>(GetRoute("Type")),
                     Sessions = new HyperListLink<Session>(GetRoute("Session")),
                     Users = new HyperListLink<User>(GetRoute("User")),

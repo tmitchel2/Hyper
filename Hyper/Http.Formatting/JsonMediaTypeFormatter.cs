@@ -1,13 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http.Formatting;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.Http;
 using System.Web.Script.Serialization;
 using Hyper.Http.Serialization;
 
@@ -16,79 +12,8 @@ namespace Hyper.Http.Formatting
     /// <summary>
     /// HyperJsonMediaTypeFormatter class.
     /// </summary>
-    public class HyperJsonMediaTypeFormatter : MediaTypeFormatter
+    public class JsonMediaTypeFormatter : MediaTypeFormatter
     {
-        private static readonly Encoding DefaultEncodingVal = new UTF8Encoding(false, true);
-        private readonly HyperJsonConverter _jsonConverter;
-        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="HyperJsonMediaTypeFormatter" /> class.
-        /// </summary>
-        /// <param name="types">The types.</param>
-        public HyperJsonMediaTypeFormatter(IEnumerable<Type> types)
-        {
-            var typeList = types.ToList();
-
-            // Create default converter
-            _jsonConverter = new HyperJsonConverter(typeList);
-
-            // Add vendor specific json media types
-            foreach (var mediaType in typeList.Select(GetMediaType))
-            {
-                SupportedMediaTypes.Add(mediaType);
-            }
-
-            // Add global json media type
-            SupportedMediaTypes.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            SupportedMediaTypes.Add(new MediaTypeWithQualityHeaderValue("application/vnd.httperror+json"));
-
-            // SupportedEncodings.Add(new UTF8Encoding(false, true));
-            // SupportedEncodings.Add(new UnicodeEncoding(false, true, true));
-        }
-
-        /// <summary>
-        /// Gets the default encoding.
-        /// </summary>
-        /// <value>
-        /// The default encoding.
-        /// </value>
-        public static Encoding DefaultEncoding
-        {
-            get
-            {
-                return DefaultEncodingVal;
-            }
-        }
-
-        /// <summary>
-        /// Gets the type of the media.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns>MediaTypeWithQualityHeaderValue object.</returns>
-        public static MediaTypeWithQualityHeaderValue GetMediaType(Type type)
-        {
-            if (type == typeof(HttpError))
-            {
-                return new MediaTypeWithQualityHeaderValue("application/vnd.httperror+json");
-            }
-
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IList<>))
-            {
-                return type.GetGenericArguments()
-                    .Single()
-                    .GetCustomAttributes(typeof(HyperContractAttribute), true)
-                    .Cast<HyperContractAttribute>()
-                    .Select(attribute => new MediaTypeWithQualityHeaderValue(attribute.MediaType + @"list+json"))
-                    .Single();
-            }
-
-            return type
-                .GetCustomAttributes(typeof(HyperContractAttribute), true)
-                .Cast<HyperContractAttribute>()
-                .Select(attribute => new MediaTypeWithQualityHeaderValue(attribute.MediaType + @"+json"))
-                .Single();
-        }
-
         /// <summary>
         /// Queries whether this <see cref="T:System.Net.Http.Formatting.MediaTypeFormatter" /> can deserializean object of the specified type.
         /// </summary>
@@ -98,7 +23,7 @@ namespace Hyper.Http.Formatting
         /// </returns>
         public override bool CanReadType(Type type)
         {
-            return SupportedMediaTypes.Contains(GetMediaType(type));
+            return HyperMediaTypeFormatter.CanReadAndWriteType(type);
         }
 
         /// <summary>
@@ -110,7 +35,7 @@ namespace Hyper.Http.Formatting
         /// </returns>
         public override bool CanWriteType(Type type)
         {
-            return SupportedMediaTypes.Contains(GetMediaType(type));
+            return HyperMediaTypeFormatter.CanReadAndWriteType(type);
         }
 
         /// <summary>
@@ -125,9 +50,11 @@ namespace Hyper.Http.Formatting
         /// </returns>
         public override async Task<object> ReadFromStreamAsync(Type type, Stream readStream, System.Net.Http.HttpContent content, IFormatterLogger formatterLogger)
         {
+            var encoding = new UTF8Encoding(false, true);
             var serialiser = new JavaScriptSerializer();
-            serialiser.RegisterConverters(new[] { _jsonConverter });
-            using (var streamReader = new StreamReader(readStream, DefaultEncoding))
+            var jsonConverter = new HyperJsonConverter(new[] { type });
+            serialiser.RegisterConverters(new[] { jsonConverter });
+            using (var streamReader = new StreamReader(readStream, encoding))
             {
                 var data = await streamReader.ReadToEndAsync();
                 return serialiser.Deserialize(data, type);
@@ -150,10 +77,11 @@ namespace Hyper.Http.Formatting
             var task = Task.Factory.StartNew(
                 () =>
                     {
+                        var encoding = new UTF8Encoding(false, true);
                         var serialiser = new JavaScriptSerializer();
-                        serialiser.RegisterConverters(new[] { _jsonConverter });
-                        using (
-                            var streamWriter = new StreamWriter(writeStream, DefaultEncoding, 512, true))
+                        var jsonConverter = new HyperJsonConverter(new[] { type });
+                        serialiser.RegisterConverters(new[] { jsonConverter });
+                        using (var streamWriter = new StreamWriter(writeStream, encoding, 512, true))
                         {
                             var data = serialiser.Serialize(value);
                             streamWriter.Write(data);

@@ -49,6 +49,9 @@
     <StartupObject>HyperTests.Application</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MsgPack">
+      <HintPath>..\packages\MsgPack.Cli.0.3.2\lib\net40-client\MsgPack.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -61,6 +64,7 @@
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Web.Http.SelfHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
@@ -68,7 +72,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
+    <Compile Include="BsonJsonFormatterTests.cs" />
+    <Compile Include="CollectionExtensions.cs" />
+    <Compile Include="FormatterTestsBase.cs" />
+    <Compile Include="Http.Formatting\NewtonsoftBsonMediaTypeFormatter.cs" />
+    <Compile Include="Http.Formatting\HyperNewtonsoftJsonConverter.cs" />
+    <Compile Include="Http.Formatting\MsgPackMediaTypeFormatter.cs" />
+    <Compile Include="Http.Formatting\NewtonsoftJsonMediaTypeFormatter.cs" />
     <Compile Include="IdentityModel.Selectors\HyperUserNamePasswordValidator.cs" />
+    <Compile Include="JsonFormatterTests.cs" />
+    <Compile Include="MessagePackFormatterTests.cs" />
+    <Compile Include="NewtonsoftJsonFormatterTests.cs" />
     <Compile Include="SimpleTracer.cs" />
     <Compile Include="Controllers\MessageController.cs" />
     <Compile Include="Models\Api.cs" />

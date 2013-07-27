@@ -3,6 +3,7 @@ namespace Hyper
     /// <summary>
     /// HyperLink class.
     /// </summary>
+    /// <typeparam name="T">Type T</typeparam>
     [HyperContract(Name = "hyperlink", MediaType = "application/vnd.hyper.hyperlink", Version = "1.0.0.0")]
     public class HyperLink<T>
     {

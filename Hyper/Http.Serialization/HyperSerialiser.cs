@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Net.Http.Formatting;
 using System.Text;
-using Hyper.Http.Formatting;
 
 namespace Hyper.Http.Serialization
 {
@@ -11,15 +9,15 @@ namespace Hyper.Http.Serialization
     /// </summary>
     public class HyperSerialiser : IHyperSerialiser
     {
-        private readonly HyperJsonMediaTypeFormatter _formatter;
+        private readonly MediaTypeFormatter _formatter;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HyperSerialiser" /> class.
         /// </summary>
-        /// <param name="types">The types.</param>
-        public HyperSerialiser(IEnumerable<Type> types)
+        /// <param name="formatter">The formatter.</param>
+        public HyperSerialiser(MediaTypeFormatter formatter)
         {
-            _formatter = new HyperJsonMediaTypeFormatter(types);
+            _formatter = formatter;
         }
 
         /// <summary>
@@ -30,7 +28,7 @@ namespace Hyper.Http.Serialization
         /// <returns>Deserialised object.</returns>
         public T Deserialise<T>(string data)
         {
-            var task = _formatter.ReadFromStreamAsync(typeof(T), new MemoryStream(ASCIIEncoding.Default.GetBytes(data)), null, null);
+            var task = _formatter.ReadFromStreamAsync(typeof(T), new MemoryStream(Encoding.Default.GetBytes(data)), null, null);
             task.Wait();
             return (T)task.Result;
         }

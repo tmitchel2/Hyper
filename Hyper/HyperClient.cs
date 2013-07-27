@@ -1,7 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Security.Authentication;
 using System.Text;
@@ -23,12 +23,21 @@ namespace Hyper
         /// <summary>
         /// Initializes a new instance of the <see cref="HyperClient" /> class.
         /// </summary>
-        /// <param name="types">The types.</param>
-        public HyperClient(IEnumerable<Type> types)
+        /// <param name="configuration">The configuration.</param>
+        public HyperClient(HyperClientConfiguration configuration)
         {
-            _serialiser = new HyperSerialiser(types);
+            Configuration = configuration;
+            _serialiser = new HyperSerialiser(Configuration.Formatters[0].Formatter);
             _httpClient = new HttpClient();
         }
+
+        /// <summary>
+        /// Gets the configuration.
+        /// </summary>
+        /// <value>
+        /// The configuration.
+        /// </value>
+        public HyperClientConfiguration Configuration { get; private set; }
 
         /// <summary>
         /// Gets the specified URL.
@@ -39,7 +48,7 @@ namespace Hyper
         public async Task<T> Get<T>(string url)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, url);
-            request.Headers.Accept.Add(HyperJsonMediaTypeFormatter.GetMediaType(typeof(T)));
+            request.Headers.Accept.Add(Configuration.Formatters[0].GetMediaType(typeof(T)));
             var result = await _httpClient.SendAsync(request);
             return await ProcessResult<T>(result);
         }
@@ -56,9 +65,9 @@ namespace Hyper
             var request = new HttpRequestMessage(HttpMethod.Post, url);
 
             // Add content
-            var mediaType = HyperJsonMediaTypeFormatter.GetMediaType(typeof(T));
+            var mediaType = Configuration.Formatters[0].GetMediaType(typeof(T));
             request.Headers.Accept.Add(mediaType);
-            request.Content = new StringContent(_serialiser.Serialise(item), HyperJsonMediaTypeFormatter.DefaultEncoding, mediaType.ToString());
+            request.Content = new StringContent(_serialiser.Serialise(item), Configuration.Formatters[0].DefaultEncoding, mediaType.ToString());
 
             // request.Content = new ObjectContent<T>(item, new HyperJsonMediaTypeFormatter(), mediaType.ToString())
 

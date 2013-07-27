@@ -28,15 +28,6 @@ namespace HyperTests.Models
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the version.
-        /// </summary>
-        /// <value>
-        /// The version.
-        /// </value>
-        [HyperMember(Name = "version")]
-        public Version Version { get; set; }
-
-        /// <summary>
         /// Gets or sets the types.
         /// </summary>
         /// <value>

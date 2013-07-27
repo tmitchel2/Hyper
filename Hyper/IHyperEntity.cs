@@ -3,6 +3,7 @@ namespace Hyper
     /// <summary>
     /// IHyperEntity interface.
     /// </summary>
+    /// <typeparam name="T">Type T.</typeparam>
     public interface IHyperEntity<T>
     {
         /// <summary>

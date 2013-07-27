@@ -2,6 +2,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http.SelfHost;
 using Hyper;
+using Hyper.Http.Formatting;
 using HyperTests.Models;
 using NUnit.Framework;
 
@@ -46,7 +47,9 @@ namespace HyperTests
 
         private static HyperClient GetClient()
         {
-            return new HyperClient(Application.GetTypes());
+            var config = new HyperClientConfiguration();
+            config.Formatters.Add(new HyperMediaTypeFormatter("json", new JsonMediaTypeFormatter(), Application.GetTypes()));
+            return new HyperClient(config);
         }
     }
 }

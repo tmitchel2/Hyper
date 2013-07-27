@@ -36,6 +36,7 @@
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -54,13 +55,15 @@
     <Compile Include="Http.Dispatcher\HttpControllerTypeCache.cs" />
     <Compile Include="Http.Dispatcher\HyperHttpControllerSelector.cs" />
     <Compile Include="Http.Formatting\HyperHtmlMediaTypeFormatter.cs" />
-    <Compile Include="Http.Formatting\HyperJsonMediaTypeFormatter.cs" />
-    <Compile Include="Http.Formatting\HyperXmlMediaTypeFormatter.cs" />
+    <Compile Include="Http.Formatting\JsonMediaTypeFormatter.cs" />
+    <Compile Include="Http.Formatting\XmlMediaTypeFormatter.cs" />
+    <Compile Include="Http.Formatting\HyperMediaTypeFormatter.cs" />
     <Compile Include="Http.SelfHost\HyperHttpSelfHostConfiguration.cs" />
     <Compile Include="Http.Serialization\HyperSerialiser.cs" />
     <Compile Include="Http\DictionaryExtensions.cs" />
     <Compile Include="Http\UnknownHttpMethodException.cs" />
     <Compile Include="HyperClient.cs" />
+    <Compile Include="HyperClientConfiguration.cs" />
     <Compile Include="HyperContractAttribute.cs" />
     <Compile Include="HyperEmbeddedAttribute.cs" />
     <Compile Include="HyperEntityExtensions.cs" />
